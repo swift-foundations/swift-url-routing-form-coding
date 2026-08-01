@@ -32,12 +32,10 @@ struct `URLRouting.Conversion+form Tests` {
 }
 
 extension `URLRouting.Conversion+form Tests`.Unit {
-    private typealias Fixture = `URLRouting.Conversion+form Tests`.Login
-
     @Test
     func `form conversion round-trips a value through form data`() throws {
-        let conversion: Form.Conversion<Fixture> = .form(Fixture.self)
-        let value = Fixture(username: "coen", password: "s cret")
+        let conversion: Form.Conversion<Login> = .form(Login.self)
+        let value = Login(username: "coen", password: "s cret")
 
         let data = try conversion.unapply(value)
         let decoded = try conversion.apply(data)
@@ -50,8 +48,8 @@ extension `URLRouting.Conversion+form Tests`.Unit {
         let decoder = Form.Decoder()
         let encoder = Form.Encoder()
 
-        let conversion: Form.Conversion<Fixture> = .form(
-            Fixture.self,
+        let conversion: Form.Conversion<Login> = .form(
+            Login.self,
             decoder: decoder,
             encoder: encoder
         )
@@ -62,11 +60,9 @@ extension `URLRouting.Conversion+form Tests`.Unit {
 }
 
 extension `URLRouting.Conversion+form Tests`.`Edge Case` {
-    private typealias Fixture = `URLRouting.Conversion+form Tests`.Login
-
     @Test
     func `applying form data that misses required fields throws the routing error`() {
-        let conversion: Form.Conversion<Fixture> = .form(Fixture.self)
+        let conversion: Form.Conversion<Login> = .form(Login.self)
 
         #expect(throws: RFC_3986.URI.Routing.Error.self) {
             try conversion.apply(Data())
@@ -75,15 +71,13 @@ extension `URLRouting.Conversion+form Tests`.`Edge Case` {
 }
 
 extension `URLRouting.Conversion+form Tests`.Integration {
-    private typealias Fixture = `URLRouting.Conversion+form Tests`.Login
-
     @Test
     func `wire-format form data decodes percent-encoded fields`() throws {
-        let conversion: Form.Conversion<Fixture> = .form(Fixture.self)
+        let conversion: Form.Conversion<Login> = .form(Login.self)
         let wire = Data("username=coen&password=s%20cret".utf8)
 
         let decoded = try conversion.apply(wire)
 
-        #expect(decoded == Fixture(username: "coen", password: "s cret"))
+        #expect(decoded == Login(username: "coen", password: "s cret"))
     }
 }
